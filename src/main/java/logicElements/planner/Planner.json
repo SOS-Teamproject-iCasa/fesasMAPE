@@ -1,0 +1,1 @@
+{"INFORMATION_TYPE":"Planning_DEFAULT","PROPERTIES":[],"DESCRIPTION":"","LOGIC_TYPE":"PLANNER","PROGRAMMING_LANGUAGE":"Java","SUPPORTED_INFORMATION_TYPES":["Planning_DEFAULT"],"ID":"12345678","DEPENDENCIES":["logicElements.knowledge.Synchronizer"],"SHORT_NAME":"Planner","NAME":"logicElements.planner.Planner"}

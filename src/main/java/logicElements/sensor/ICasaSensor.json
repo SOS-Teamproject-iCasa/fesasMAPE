@@ -1,0 +1,1 @@
+{"INFORMATION_TYPE":"DEFAULT","PROPERTIES":[],"DESCRIPTION":"","LOGIC_TYPE":"SENSOR","PROGRAMMING_LANGUAGE":"Java","SUPPORTED_INFORMATION_TYPES":["Probe_SIMPLE_MANAGED_RESOURCES"],"ID":"12345678","DEPENDENCIES":["logicElements.sensor.ICasaSensor$SensorZone","logicElements.sensor.ICasaSensor$SensorDataWindow"],"SHORT_NAME":"ICasaSensor","NAME":"logicElements.sensor.ICasaSensor"}

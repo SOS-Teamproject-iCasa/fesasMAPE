@@ -1,0 +1,1 @@
+{"INFORMATION_TYPE":"Effector_DEFAULT","PROPERTIES":[],"DESCRIPTION":"ICasaEffector","LOGIC_TYPE":"EFFECTOR","PROGRAMMING_LANGUAGE":"Java","SUPPORTED_INFORMATION_TYPES":["Executing_DEFAULT"],"ID":"12345678","DEPENDENCIES":["logicElements.effector.ICasaEffector$EffectorZone"],"SHORT_NAME":"ICasaEffector","NAME":"logicElements.effector.ICasaEffector"}
