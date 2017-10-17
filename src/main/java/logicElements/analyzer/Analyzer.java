@@ -1,6 +1,7 @@
 package logicElements.analyzer;
 
 import java.util.HashMap;
+import java.util.List;
 
 import de.mannheim.wifo2.fesas.logicRepositoryStructure.data.metadata.logic.AbstractLogic;
 import de.mannheim.wifo2.fesas.logicRepositoryStructure.data.metadata.logic.LogicType;
@@ -55,14 +56,14 @@ public class Analyzer extends AbstractLogic implements IAnalyzerLogic {
 
 				Context monitorData = (Context)data.getData();
 				
+				// first string: zone; list of sensors (sensor key and value)
+				HashMap<String, List<HashMap<String, String>>> zoneMap = monitorData.getAllObjects();
 				
-				/*
-				 * 
-				 * Your implementation
-				 * 
-				 */
+				// pseudo
+				// if(sensor_value > xyz) then do ...
 				
-				String analyzerResult = "";
+				
+				String analyzerResult = ""; // here "hardcode" some reaction
 				this.sendData(analyzerResult);
 
 				return "Analyzer - Expected Data Type received! The Value is " + data.getData();
