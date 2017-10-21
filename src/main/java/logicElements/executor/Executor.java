@@ -46,9 +46,10 @@ public class Executor extends AbstractLogic implements IExecutorLogic {
 	public String callLogic(IKnowledgeRecord data) {
 		if (data instanceof KnowledgeRecord) {
 			if (data.getData() instanceof String) { //substitute String with the expected data type if needed
-				//data.getData() return the actual data. The other properties of data is metadata (e.g., time stamps).
+				String plannerResult = (String) data.getData(); // return the actual data. The other properties of data is metadata (e.g., time stamps).
 				
 		
+				/*
 				JsonObject executorResult = new JsonObject();
 				
 				JsonObject outsideArea = new JsonObject();
@@ -86,12 +87,13 @@ public class Executor extends AbstractLogic implements IExecutorLogic {
 				lightValueCloakroom.add(1.0);
 				cloakroom.add("DimmerLight", lightValueCloakroom);
 				executorResult.add("Cloakroom", cloakroom);
+				*/
 				
 				
-				this.sendData(executorResult.toString());
-//				String executorResult = "{\"Play_Area\": {\"Heater\": [1.0], \"DimmerLight\": [0.5]}, \"Outside_Area\": {\"Sprinkler\": [\"ON\"]}}"; // Example serialized to JSON
+				//this.sendData("");
+				//String executorResult2 = "{\"Play_Area\": {\"Heater\": [1.0], \"DimmerLight\": [0.5]}, \"Outside_Area\": {\"Sprinkler\": [\"ON\"]}}"; // Example serialized to JSON
 				// Available actuators: Heater, Cooler, DimmerLight, Sprinkler, BinaryLightCO, BinaryLightCO2, BinaryLightGardener, SirenCO, SirenCO2, SirenBurglar
-//				this.sendData(executorResult);
+				this.sendData(plannerResult);
 				
 				return "Executor - Expected Data Type received! The Value is " + data.getData();
 			}

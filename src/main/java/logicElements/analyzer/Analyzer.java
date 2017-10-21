@@ -3,6 +3,9 @@ package logicElements.analyzer;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import de.mannheim.wifo2.fesas.logicRepositoryStructure.data.metadata.logic.AbstractLogic;
 import de.mannheim.wifo2.fesas.logicRepositoryStructure.data.metadata.logic.LogicType;
 import de.mannheim.wifo2.fesas.logicRepositoryStructure.data.metadata.logic.logicInterfaces.IAnalyzerLogic;
@@ -54,17 +57,83 @@ public class Analyzer extends AbstractLogic implements IAnalyzerLogic {
 				// data.getData() return the actual data. The other properties
 				// of data is metadata (e.g., time stamps).
 
-				Context monitorData = (Context)data.getData();
+				Context monitorData = (Context) data.getData();
+				
+				String analyzerResult = ""; // here "hardcode" some reaction
 				
 				// first string: zone; list of sensors (sensor key and value)
 				HashMap<String, List<HashMap<String, String>>> zoneMap = monitorData.getAllObjects();
 				
-				// pseudo
-				// if(sensor_value > xyz) then do ...
+				JsonObject analyzerResultJson = new JsonObject();
+				
+				// evaluate presence in the Play_Area
+				List<HashMap<String, String>> playAreaSensors = zoneMap.get("Play_Area");
+				for(HashMap<String, String> sensor : playAreaSensors) {
+					System.out.println(sensor.get("ATTRIBUTE_NAME"));
+					System.out.println(sensor.get("VALUE"));	
+					if(sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("PresenceSensor")) {
+						System.out.println("Presence Sensor Found");
+						if(sensor.get("VALUE").equalsIgnoreCase("true")) {
+							System.out.println("Person in Play_Area");
+							analyzerResultJson.addProperty("personInPlayArea", new Boolean(true));
+						} else {
+							analyzerResultJson.addProperty("personInPlayArea", new Boolean(false));
+						}
+					}
+				}
+				
+				// evaluate presence in the Outside Area
+				List<HashMap<String, String>> outsideAreaSensors = zoneMap.get("Outside_Area");
+				for(HashMap<String, String> sensor : outsideAreaSensors) {
+					System.out.println(sensor.get("ATTRIBUTE_NAME"));
+					System.out.println(sensor.get("VALUE"));	
+					if(sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("PresenceSensor")) {
+						System.out.println("Presence Sensor Found");
+						if(sensor.get("VALUE").equalsIgnoreCase("true")) {
+							System.out.println("Person in Outside_Area");
+							analyzerResultJson.addProperty("personInOutsideArea", new Boolean(true));
+						} else {
+							analyzerResultJson.addProperty("personInOutsideArea", new Boolean(false));
+						}
+					}
+				}
+				
+				// evaluate presence in the Dining Area
+				List<HashMap<String, String>> diningAreaSensors = zoneMap.get("Dining_Area");
+				for(HashMap<String, String> sensor : diningAreaSensors) {
+					System.out.println(sensor.get("ATTRIBUTE_NAME"));
+					System.out.println(sensor.get("VALUE"));	
+					if(sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("PresenceSensor")) {
+						System.out.println("Presence Sensor Found");
+						if(sensor.get("VALUE").equalsIgnoreCase("true")) {
+							System.out.println("Person in Dining_Area");
+							analyzerResultJson.addProperty("personInDiningArea", new Boolean(true));
+						} else {
+							analyzerResultJson.addProperty("personInDiningArea", new Boolean(false));
+						}
+					}
+				}
 				
 				
-				String analyzerResult = ""; // here "hardcode" some reaction
-				this.sendData(analyzerResult);
+				// evaluate presence in the Dining Area
+				List<HashMap<String, String>> cloakroomSensors = zoneMap.get("Cloakroom");
+				for(HashMap<String, String> sensor : cloakroomSensors) {
+					System.out.println(sensor.get("ATTRIBUTE_NAME"));
+					System.out.println(sensor.get("VALUE"));	
+					if(sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("PresenceSensor")) {
+						System.out.println("Presence Sensor Found");
+						if(sensor.get("VALUE").equalsIgnoreCase("true")) {
+							System.out.println("Person in Cloakroom");
+							analyzerResultJson.addProperty("personInCloakroom", new Boolean(true));
+						} else {
+							analyzerResultJson.addProperty("personInCloakroom", new Boolean(false));
+						}
+					}
+				}				
+				
+				
+			
+				this.sendData(analyzerResultJson.toString());
 
 				return "Analyzer - Expected Data Type received! The Value is " + data.getData();
 			}
@@ -76,3 +145,5 @@ public class Analyzer extends AbstractLogic implements IAnalyzerLogic {
 		return "Analyzer - Not a KnowledgeRecord received! It is: " + data.getClass().getSimpleName();
 	}
 }
+
+

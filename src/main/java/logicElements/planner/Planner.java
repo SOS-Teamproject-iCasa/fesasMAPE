@@ -2,12 +2,22 @@ package logicElements.planner;
 
 import java.util.HashMap;
 
+import org.json.JSONObject;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonObject;
+
+
 import de.mannheim.wifo2.fesas.logicRepositoryStructure.data.metadata.logic.AbstractLogic;
 import de.mannheim.wifo2.fesas.logicRepositoryStructure.data.metadata.logic.LogicType;
 import de.mannheim.wifo2.fesas.logicRepositoryStructure.data.metadata.logic.logicInterfaces.IPlannerLogic;
 import de.mannheim.wifo2.fesas.sasStructure.data.adaptationLogic.information.InformationType;
 import de.mannheim.wifo2.fesas.sasStructure.data.adaptationLogic.knowledge.IKnowledgeRecord;
 import de.mannheim.wifo2.fesas.sasStructure.data.adaptationLogic.knowledge.KnowledgeRecord;
+import de.mannheim.wifo2.fesas.tools.parser.jsonParser.JSONParser;
 import logicElements.knowledge.Synchronizer;
 
 /**
@@ -43,17 +53,100 @@ public class Planner extends AbstractLogic implements IPlannerLogic {
 	public String callLogic(IKnowledgeRecord data) {
 		if (data instanceof KnowledgeRecord) { //substitute Object with the expected data type
 			if (data.getData() instanceof String) { //substitute String with the expected data type if needed
-				//data.getData() return the actual data. The other properties of data is metadata (e.g., time stamps).
+				
+				String resultFromAnalyzerString = (String) data.getData(); //return the actual data. The other properties of data is metadata (e.g., time stamps).
+				System.out.print("Planner received: " + resultFromAnalyzerString);
+				
+				
+				JsonElement element = new JsonParser().parse(resultFromAnalyzerString);
+				JsonObject analyzerResultObject = element.getAsJsonObject();
+				
+				System.out.println("\nPlay Area: " + analyzerResultObject.get("personInPlayArea"));
+				System.out.println("Outside Area: " + analyzerResultObject.get("personInOutsideArea"));
+				System.out.println("Dining Area: " + analyzerResultObject.get("personInDiningArea"));
+				System.out.println("Cloakroom: " + analyzerResultObject.get("personInCloakroom"));
+				
+				
+				
+				JsonObject plannerResult = new JsonObject();
+				
+				
+				// plan for Outside_Area
+				JsonObject outsideArea = new JsonObject();
+				JsonArray sprinklerValue;
+				
+				if(analyzerResultObject.get("personInOutsideArea").getAsBoolean()) {
+					sprinklerValue = new JsonArray();
+					sprinklerValue.add("OFF");
+				} else {
+					sprinklerValue = new JsonArray();
+					sprinklerValue.add("ON");
+				}
+				
+				outsideArea.add("Sprinkler", sprinklerValue);
+				plannerResult.add("Outside_Area", outsideArea);
+				
+				
+				// plan for Play_Area
+				JsonObject playArea = new JsonObject();
+				JsonArray heaterValue = new JsonArray();
+				JsonArray lightValue = new JsonArray();
+				
+				if(analyzerResultObject.get("personInPlayArea").getAsBoolean()) {
+					heaterValue.add(1.0);
+					lightValue.add(1);
 
+				} else {
+					heaterValue.add(0.0);
+					lightValue.add(0);
+				}
 				
-				/*
-				 * 
-				 * Your implementation
-				 * 
-				 */
+				playArea.add("Heater", heaterValue);
+				playArea.add("DimmerLight", lightValue);
+				plannerResult.add("Play_Area", playArea);
 				
-				String planningResult = "";
-				this.sendData(planningResult);
+				
+
+				// plan for Dining_Area
+				JsonObject diningArea = new JsonObject();
+				heaterValue = new JsonArray();
+				lightValue = new JsonArray();
+				
+				if(analyzerResultObject.get("personInDiningArea").getAsBoolean()) {
+					heaterValue.add(1.0);
+					lightValue.add(1);
+
+				} else {
+					heaterValue.add(0.0);
+					lightValue.add(0);
+				}
+				
+				diningArea.add("Heater", heaterValue);
+				diningArea.add("DimmerLight", lightValue);
+				plannerResult.add("Dining_Area", diningArea);
+				
+				
+				
+				// plan for Cloakroom
+				JsonObject cloakroom = new JsonObject();
+				heaterValue = new JsonArray();
+				lightValue = new JsonArray();
+				
+				if(analyzerResultObject.get("personInCloakroom").getAsBoolean()) {
+					heaterValue.add(1.0);
+					lightValue.add(1);
+
+				} else {
+					heaterValue.add(0.0);
+					lightValue.add(0);
+				}
+				
+				cloakroom.add("Heater", heaterValue);
+				cloakroom.add("DimmerLight", lightValue);
+				plannerResult.add("Cloakroom", cloakroom);
+				
+				
+				this.sendData(plannerResult.toString());
 				
 				return "Planner - Expected Data Type received! The Value is " + data.getData();
 			}
