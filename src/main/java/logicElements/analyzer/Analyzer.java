@@ -1,5 +1,8 @@
 package logicElements.analyzer;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,16 +36,20 @@ public class Analyzer extends AbstractLogic implements IAnalyzerLogic {
 		type = LogicType.ANALYZER;
 		shortName = "Analyzer";
 	}
+		
 
 	// do not change anything above this line (except of adding import
 	// statements)
 
 	// add variables here
+		
+	DateFormat dateFormatter;
+	
 
 	@Override
 	public void initializeLogic(HashMap<String, String> properties) {
-		// use this method for initializing variables, etc.
-		// if there is nothing to do, delete it
+		dateFormatter =  new SimpleDateFormat("HH:mm:ss:SSS");
+	
 	}
 
 	/**
@@ -59,6 +66,7 @@ public class Analyzer extends AbstractLogic implements IAnalyzerLogic {
 
 				Context monitorData = (Context) data.getData();
 				
+				String time = "";
 				String analyzerResult = ""; // here "hardcode" some reaction
 				
 				// first string: zone; list of sensors (sensor key and value)
@@ -82,7 +90,7 @@ public class Analyzer extends AbstractLogic implements IAnalyzerLogic {
 					}
 				}
 				
-				// evaluate presence in the Outside Area
+				// evaluate presence and time in the Outside Area
 				List<HashMap<String, String>> outsideAreaSensors = zoneMap.get("Outside_Area");
 				for(HashMap<String, String> sensor : outsideAreaSensors) {
 					System.out.println(sensor.get("ATTRIBUTE_NAME"));
@@ -95,6 +103,10 @@ public class Analyzer extends AbstractLogic implements IAnalyzerLogic {
 						} else {
 							analyzerResultJson.addProperty("personInOutsideArea", new Boolean(false));
 						}
+					} else if (sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("WorkTime")) {
+						time = dateFormatter.format(new Date(Long.parseLong((String) sensor.get("VALUE"))));
+						System.out.println(time);
+						analyzerResultJson.addProperty("time", time);
 					}
 				}
 				
@@ -129,8 +141,9 @@ public class Analyzer extends AbstractLogic implements IAnalyzerLogic {
 							analyzerResultJson.addProperty("personInCloakroom", new Boolean(false));
 						}
 					}
-				}				
+				}
 				
+							
 				
 			
 				this.sendData(analyzerResultJson.toString());

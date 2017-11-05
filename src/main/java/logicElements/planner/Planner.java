@@ -65,26 +65,45 @@ public class Planner extends AbstractLogic implements IPlannerLogic {
 				System.out.println("Outside Area: " + analyzerResultObject.get("personInOutsideArea"));
 				System.out.println("Dining Area: " + analyzerResultObject.get("personInDiningArea"));
 				System.out.println("Cloakroom: " + analyzerResultObject.get("personInCloakroom"));
+				System.out.println("Time: " + analyzerResultObject.get("time"));
 				
 				
 				
 				JsonObject plannerResult = new JsonObject();
+				int hourOfTheDay = 0;
 				
 				
 				// plan for Outside_Area
 				JsonObject outsideArea = new JsonObject();
 				JsonArray sprinklerValue;
+				JsonArray sirenValue;
 				
 				if(analyzerResultObject.get("personInOutsideArea").getAsBoolean()) {
 					sprinklerValue = new JsonArray();
+					sirenValue = new JsonArray();
 					sprinklerValue.add("OFF");
+					sirenValue.add("ON");
+
+					
 				} else {
 					sprinklerValue = new JsonArray();
 					sprinklerValue.add("ON");
+					sirenValue = new JsonArray();
+					sirenValue.add("ON");
+				}
+				
+				// time dependency: Do not water between 15:00 and 17:00.
+				hourOfTheDay = Integer.parseInt(analyzerResultObject.get("time").getAsString().substring(0,2));
+				System.out.println("Hour of the day: " + hourOfTheDay);
+				if(hourOfTheDay > 15 && hourOfTheDay < 17) {
+					sprinklerValue = new JsonArray();
+					sprinklerValue.add("OFF");
 				}
 				
 				outsideArea.add("Sprinkler", sprinklerValue);
+				outsideArea.add("Siren", sirenValue);
 				plannerResult.add("Outside_Area", outsideArea);
+				
 				
 				
 				// plan for Play_Area

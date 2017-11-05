@@ -48,51 +48,9 @@ public class Executor extends AbstractLogic implements IExecutorLogic {
 			if (data.getData() instanceof String) { //substitute String with the expected data type if needed
 				String plannerResult = (String) data.getData(); // return the actual data. The other properties of data is metadata (e.g., time stamps).
 				
-		
-				/*
-				JsonObject executorResult = new JsonObject();
-				
-				JsonObject outsideArea = new JsonObject();
-				JsonArray sprinklerValue = new JsonArray();
-				sprinklerValue.add("ON");
-				outsideArea.add("Sprinkler", sprinklerValue);
-				JsonArray speakerValue = new JsonArray();
-				speakerValue.add("ON");
-				outsideArea.add("Speaker", speakerValue);
-				executorResult.add("Outside_Area", outsideArea);
-				
-				JsonObject playArea = new JsonObject();
-				JsonArray heaterValue = new JsonArray();
-				heaterValue.add(1.0);
-				playArea.add("Heater", heaterValue);
-				JsonArray lightValue = new JsonArray();
-				lightValue.add(0.5);
-				playArea.add("DimmerLight", lightValue);
-				executorResult.add("Play_Area", playArea);
-				
-				JsonObject diningArea = new JsonObject();
-				JsonArray heaterValueDining = new JsonArray();
-				heaterValueDining.add(0.8);
-				diningArea.add("Heater", heaterValueDining);
-				JsonArray lightValueDining = new JsonArray();
-				lightValueDining.add(0.2);
-				diningArea.add("DimmerLight", lightValueDining);
-				executorResult.add("Dining_Area", diningArea);
-				
-				JsonObject cloakroom = new JsonObject();
-				JsonArray heaterValueCloakroom = new JsonArray();
-				heaterValueCloakroom.add(0.3);
-				cloakroom.add("Heater", heaterValueCloakroom);
-				JsonArray lightValueCloakroom = new JsonArray();
-				lightValueCloakroom.add(1.0);
-				cloakroom.add("DimmerLight", lightValueCloakroom);
-				executorResult.add("Cloakroom", cloakroom);
-				*/
-				
-				
-				//this.sendData("");
-				//String executorResult2 = "{\"Play_Area\": {\"Heater\": [1.0], \"DimmerLight\": [0.5]}, \"Outside_Area\": {\"Sprinkler\": [\"ON\"]}}"; // Example serialized to JSON
-				// Available actuators: Heater, Cooler, DimmerLight, Sprinkler, BinaryLightCO, BinaryLightCO2, BinaryLightGardener, SirenCO, SirenCO2, SirenBurglar
+
+				// here the planner already assembles the data in a way that no further actions are required
+				// the string can be executed right away
 				this.sendData(plannerResult);
 				
 				return "Executor - Expected Data Type received! The Value is " + data.getData();
