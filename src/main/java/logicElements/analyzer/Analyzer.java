@@ -45,6 +45,44 @@ public class Analyzer extends AbstractLogic implements IAnalyzerLogic {
 		
 	DateFormat dateFormatter;
 	
+	// use Json object for structuring response (which is sent to planner)
+	JsonObject analyzerResultJson = new JsonObject();
+	
+	// evaluate sensors and add to json result 
+	private void evaluateSensors(List<HashMap<String, String>> sensors, String zoneName, String propertyName) {
+		String time = "";
+		int value;
+		
+		// save values in an extra zone object
+		JsonObject object = new JsonObject();
+		
+		for(HashMap<String, String> sensor : sensors) {
+			System.out.println(sensor.get("ATTRIBUTE_NAME"));
+			System.out.println(sensor.get("VALUE"));
+			
+			if (sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("PresenceSensor")) {
+				System.out.println("Presence Sensor Detected");
+				if(sensor.get("VALUE").equalsIgnoreCase("true")) {
+					System.out.println("Person in " + zoneName);
+					analyzerResultJson.addProperty(propertyName, new Boolean(true));
+				} else {
+					analyzerResultJson.addProperty(propertyName, new Boolean(false));
+				} 
+			} else if (sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("WorkTime")) {
+				time = dateFormatter.format(new Date(Long.parseLong((String) sensor.get("VALUE"))));
+				System.out.println("Time: " + time);
+				analyzerResultJson.addProperty("time", time);
+			} else if (sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("Thermometer")) {
+				value = Integer.parseInt(sensor.get("VALUE"));
+				object.addProperty("thermometerValue", value);
+			} else if (sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("Illuminance")) {
+				value = Integer.parseInt(sensor.get("VALUE"));
+				object.addProperty("illuminanceValue", value);
+			}
+			
+		}
+		analyzerResultJson.add(zoneName, object);
+	}
 
 	@Override
 	public void initializeLogic(HashMap<String, String> properties) {
@@ -66,86 +104,30 @@ public class Analyzer extends AbstractLogic implements IAnalyzerLogic {
 
 				Context monitorData = (Context) data.getData();
 				
-				String time = "";
-				String analyzerResult = ""; // here "hardcode" some reaction
+				System.out.println("Timestamp: " + data.getTimeStamp());
 				
 				// first string: zone; list of sensors (sensor key and value)
 				HashMap<String, List<HashMap<String, String>>> zoneMap = monitorData.getAllObjects();
 				
-				JsonObject analyzerResultJson = new JsonObject();
-				
-				// evaluate presence in the Play_Area
+				// evaluate sensors for Play_Area
 				List<HashMap<String, String>> playAreaSensors = zoneMap.get("Play_Area");
-				for(HashMap<String, String> sensor : playAreaSensors) {
-					System.out.println(sensor.get("ATTRIBUTE_NAME"));
-					System.out.println(sensor.get("VALUE"));	
-					if(sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("PresenceSensor")) {
-						System.out.println("Presence Sensor Found");
-						if(sensor.get("VALUE").equalsIgnoreCase("true")) {
-							System.out.println("Person in Play_Area");
-							analyzerResultJson.addProperty("personInPlayArea", new Boolean(true));
-						} else {
-							analyzerResultJson.addProperty("personInPlayArea", new Boolean(false));
-						}
-					}
-				}
+				evaluateSensors(playAreaSensors, "Play_Area", "personInPlayArea");
 				
-				// evaluate presence and time in the Outside Area
+				// evaluate sensors for Outside Area
 				List<HashMap<String, String>> outsideAreaSensors = zoneMap.get("Outside_Area");
-				for(HashMap<String, String> sensor : outsideAreaSensors) {
-					System.out.println(sensor.get("ATTRIBUTE_NAME"));
-					System.out.println(sensor.get("VALUE"));	
-					if(sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("PresenceSensor")) {
-						System.out.println("Presence Sensor Found");
-						if(sensor.get("VALUE").equalsIgnoreCase("true")) {
-							System.out.println("Person in Outside_Area");
-							analyzerResultJson.addProperty("personInOutsideArea", new Boolean(true));
-						} else {
-							analyzerResultJson.addProperty("personInOutsideArea", new Boolean(false));
-						}
-					} else if (sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("WorkTime")) {
-						time = dateFormatter.format(new Date(Long.parseLong((String) sensor.get("VALUE"))));
-						System.out.println(time);
-						analyzerResultJson.addProperty("time", time);
-					}
-				}
+				evaluateSensors(outsideAreaSensors, "Outside_Area", "personInOutsideArea");
+
 				
-				// evaluate presence in the Dining Area
+				// evaluate sensors for Dining Area
 				List<HashMap<String, String>> diningAreaSensors = zoneMap.get("Dining_Area");
-				for(HashMap<String, String> sensor : diningAreaSensors) {
-					System.out.println(sensor.get("ATTRIBUTE_NAME"));
-					System.out.println(sensor.get("VALUE"));	
-					if(sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("PresenceSensor")) {
-						System.out.println("Presence Sensor Found");
-						if(sensor.get("VALUE").equalsIgnoreCase("true")) {
-							System.out.println("Person in Dining_Area");
-							analyzerResultJson.addProperty("personInDiningArea", new Boolean(true));
-						} else {
-							analyzerResultJson.addProperty("personInDiningArea", new Boolean(false));
-						}
-					}
-				}
+				evaluateSensors(diningAreaSensors, "Dining_Area", "personInDiningArea");
 				
 				
-				// evaluate presence in the Dining Area
+				// evaluate sensors for Dining Area
 				List<HashMap<String, String>> cloakroomSensors = zoneMap.get("Cloakroom");
-				for(HashMap<String, String> sensor : cloakroomSensors) {
-					System.out.println(sensor.get("ATTRIBUTE_NAME"));
-					System.out.println(sensor.get("VALUE"));	
-					if(sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("PresenceSensor")) {
-						System.out.println("Presence Sensor Found");
-						if(sensor.get("VALUE").equalsIgnoreCase("true")) {
-							System.out.println("Person in Cloakroom");
-							analyzerResultJson.addProperty("personInCloakroom", new Boolean(true));
-						} else {
-							analyzerResultJson.addProperty("personInCloakroom", new Boolean(false));
-						}
-					}
-				}
-				
-							
-				
-			
+				evaluateSensors(cloakroomSensors, "Cloakroom", "personInCloakroom");
+
+				// forward data to planer
 				this.sendData(analyzerResultJson.toString());
 
 				return "Analyzer - Expected Data Type received! The Value is " + data.getData();

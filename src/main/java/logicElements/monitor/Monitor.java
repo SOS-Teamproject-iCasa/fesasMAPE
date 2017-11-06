@@ -69,8 +69,8 @@ public class Monitor extends AbstractLogic implements IMonitorLogic {
 						context.putEntry(zone.getKey(), ICasaSensor.SENSOR_PRESENCE, zone.getValue().get(ICasaSensor.SENSOR_PRESENCE), Context.UNIT_NONE, Context.TYPE_BOOLEAN);
 						context.putEntry(zone.getKey(), ICasaSensor.SENSOR_THERMOMETER, zone.getValue().get(ICasaSensor.SENSOR_THERMOMETER), "K", Context.TYPE_DOUBLE);
 						context.putEntry(zone.getKey(), ICasaSensor.SENSOR_ILLUMINANCE, zone.getValue().get(ICasaSensor.SENSOR_ILLUMINANCE), "Lux", Context.TYPE_DOUBLE);
-						context.putEntry(zone.getKey(), ICasaSensor.SENSOR_CO2, zone.getValue().get(ICasaSensor.SENSOR_CO2), "ppm", Context.TYPE_DOUBLE);
-						context.putEntry(zone.getKey(), ICasaSensor.SENSOR_CO, zone.getValue().get(ICasaSensor.SENSOR_CO), "ppm", Context.TYPE_DOUBLE);
+//						context.putEntry(zone.getKey(), ICasaSensor.SENSOR_CO2, zone.getValue().get(ICasaSensor.SENSOR_CO2), "ppm", Context.TYPE_DOUBLE);
+//						context.putEntry(zone.getKey(), ICasaSensor.SENSOR_CO, zone.getValue().get(ICasaSensor.SENSOR_CO), "ppm", Context.TYPE_DOUBLE);
 						context.putEntry(zone.getKey(), ICasaSensor.SENSOR_FLOOD, zone.getValue().get(ICasaSensor.SENSOR_FLOOD), Context.UNIT_NONE, Context.TYPE_BOOLEAN);
 						context.putEntry(zone.getKey(), ATTR_WORKTIME, System.currentTimeMillis() + "", "ms", Context.TYPE_LONG);
 					}

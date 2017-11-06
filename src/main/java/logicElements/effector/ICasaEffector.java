@@ -104,15 +104,15 @@ public class ICasaEffector extends AbstractLogic implements IEffectorLogic {
 		public String toString (){
 			return this.zoneId + ":" 
 					+ "\n Heater: " 		+ this.heater
-					+ "\n Cooler: " 		+ this.cooler
+//					+ "\n Cooler: " 		+ this.cooler
 					+ "\n DimmerLight: " 	+ this.dimmerLight
 					+ "\n Sprinkler: " 		+ this.sprinkler
-					+ "\n BinaryLightCO2: " + this.binaryLightCO2
-					+ "\n BinaryLightCO: "  + this.binaryLightCO
-					+ "\n BinaryLightGardener: " + this.binaryLightGardener
-					+ "\n SirenCO: " 		+ this.sirenCO
-					+ "\n SirenCO2: " 		+ this.sirenCO2
-					+ "\n SirenBurglar: " 	+ this.sirenBurglar;
+//					+ "\n BinaryLightCO2: " + this.binaryLightCO2
+//					+ "\n BinaryLightCO: "  + this.binaryLightCO
+//					+ "\n BinaryLightGardener: " + this.binaryLightGardener
+//					+ "\n SirenCO: " 		+ this.sirenCO
+//					+ "\n SirenCO2: " 		+ this.sirenCO2
+					+ "\n Siren: " 	+ this.sirenBurglar;
 		}
 	}
 	
@@ -183,7 +183,7 @@ public class ICasaEffector extends AbstractLogic implements IEffectorLogic {
 						JsonArray array = sensorAction.getAsJsonArray();
 						try {
 							switch (sensorType){
-								case "SirenBurglar": 
+								case "Siren": 
 									if (currentZone.sirenBurglar != null){
 										if(array.get(0).getAsString().equals("ON")){
 											this.sendPut("http://localhost:9000/icasa/adaptation/agent/siren/" + currentZone.sirenBurglar + "/turnOn");

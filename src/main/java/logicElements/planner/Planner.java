@@ -83,13 +83,12 @@ public class Planner extends AbstractLogic implements IPlannerLogic {
 					sirenValue = new JsonArray();
 					sprinklerValue.add("OFF");
 					sirenValue.add("ON");
-
 					
 				} else {
 					sprinklerValue = new JsonArray();
 					sprinklerValue.add("ON");
 					sirenValue = new JsonArray();
-					sirenValue.add("ON");
+					sirenValue.add("OFF");
 				}
 				
 				// time dependency: Do not water between 15:00 and 17:00.
@@ -112,7 +111,12 @@ public class Planner extends AbstractLogic implements IPlannerLogic {
 				JsonArray lightValue = new JsonArray();
 				
 				if(analyzerResultObject.get("personInPlayArea").getAsBoolean()) {
-					heaterValue.add(1.0);
+					int thermometerValue = analyzerResultObject.get("Play_Area").getAsJsonObject().get("thermometerValue").getAsInt();
+					if (thermometerValue > 296) {
+						heaterValue.add(0.0);
+					} else {
+						heaterValue.add(1.0);
+					}
 					lightValue.add(1);
 
 				} else {
@@ -132,7 +136,12 @@ public class Planner extends AbstractLogic implements IPlannerLogic {
 				lightValue = new JsonArray();
 				
 				if(analyzerResultObject.get("personInDiningArea").getAsBoolean()) {
-					heaterValue.add(1.0);
+					int thermometerValue = analyzerResultObject.get("Dining_Area").getAsJsonObject().get("thermometerValue").getAsInt();
+					if (thermometerValue > 298) {
+						heaterValue.add(0.0);
+					} else {
+						heaterValue.add(1.0);
+					}
 					lightValue.add(1);
 
 				} else {
@@ -152,7 +161,12 @@ public class Planner extends AbstractLogic implements IPlannerLogic {
 				lightValue = new JsonArray();
 				
 				if(analyzerResultObject.get("personInCloakroom").getAsBoolean()) {
-					heaterValue.add(1.0);
+					int thermometerValue = analyzerResultObject.get("Cloakroom").getAsJsonObject().get("thermometerValue").getAsInt();
+					if (thermometerValue > 296) {
+						heaterValue.add(0.0);
+					} else {
+						heaterValue.add(1.0);
+					}					
 					lightValue.add(1);
 
 				} else {

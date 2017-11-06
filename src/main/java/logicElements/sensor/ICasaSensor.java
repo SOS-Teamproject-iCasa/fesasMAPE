@@ -70,13 +70,14 @@ public class ICasaSensor extends AbstractLogic implements ISensorLogic {
 		
 		public SensorZone(String zoneId){
 			this.zoneId = zoneId;
-			String[] parts = zoneId.split("_");
-			String zoneType = parts[0]; 
-			//check zone type - default value: Tulips
-			if (zoneType.equals("Roses")){
-				this.zoneType = zoneType;
+//			String[] parts = zoneId.split("_");
+//			String zoneType = parts[0]; 
+			String zoneType = "";
+			//check zone type
+			if (zoneId.equals("Outside_Area")) {
+				this.zoneType = "Outside";
 			} else {
-				this.zoneType = "Tulips";
+				this.zoneType = "Inside";
 			}
 		}
 		
@@ -110,8 +111,8 @@ public class ICasaSensor extends AbstractLogic implements ISensorLogic {
 					+ "\n PresenceSensor: " + this.presenceSensor 
 					+ "\n Thermometer: " 	+ this.thermometer
 					+ "\n Photometer: " 	+ this.photometer
-					+ "\n CO2GasSensor: " 	+ this.co2Sensor
-					+ "\n COGasSensor: " 	+ this.coSensor
+//					+ "\n CO2GasSensor: " 	+ this.co2Sensor
+//					+ "\n COGasSensor: " 	+ this.coSensor
 					+ "\n FloodSensor: " 	+ this.floodSensor;
 		}
 	}
@@ -213,23 +214,23 @@ public class ICasaSensor extends AbstractLogic implements ISensorLogic {
 				}
 				zoneData.addProperty(SENSOR_ILLUMINANCE, photometerValue);
 				
-				//co2Sensor
-				int co2Value = 0;
-				if (zone.co2Sensor != null){
-					String co2 = this.sendGet("http://localhost:9000/icasa/adaptation/agent/co2/" + zone.co2Sensor + "/state");
-					JsonObject co2Json = (JsonObject) parser.parse(co2);
-					co2Value = co2Json.getAsJsonPrimitive("state").getAsInt();
-				}
-				zoneData.addProperty(SENSOR_CO2, co2Value);
-				
-				//coSensor
-				int coValue = 0;
-				if (zone.coSensor != null){
-					String co= this.sendGet("http://localhost:9000/icasa/adaptation/agent/carbonmonoxide/" + zone.coSensor + "/state");
-					JsonObject coJson = (JsonObject) parser.parse(co);
-					coValue = coJson.getAsJsonPrimitive("state").getAsInt();
-				}
-				zoneData.addProperty(SENSOR_CO, coValue);
+//				//co2Sensor
+//				int co2Value = 0;
+//				if (zone.co2Sensor != null){
+//					String co2 = this.sendGet("http://localhost:9000/icasa/adaptation/agent/co2/" + zone.co2Sensor + "/state");
+//					JsonObject co2Json = (JsonObject) parser.parse(co2);
+//					co2Value = co2Json.getAsJsonPrimitive("state").getAsInt();
+//				}
+//				zoneData.addProperty(SENSOR_CO2, co2Value);
+//				
+//				//coSensor
+//				int coValue = 0;
+//				if (zone.coSensor != null){
+//					String co= this.sendGet("http://localhost:9000/icasa/adaptation/agent/carbonmonoxide/" + zone.coSensor + "/state");
+//					JsonObject coJson = (JsonObject) parser.parse(co);
+//					coValue = coJson.getAsJsonPrimitive("state").getAsInt();
+//				}
+//				zoneData.addProperty(SENSOR_CO, coValue);
 				
 				//floodSensor
 				boolean floodValue = false;
@@ -245,8 +246,8 @@ public class ICasaSensor extends AbstractLogic implements ISensorLogic {
 							+ SENSOR_PRESENCE 	 + ": " + presenceValue 	+ "\n"
 							+ SENSOR_THERMOMETER + ": " + thermometerValue  + "\n"
 							+ SENSOR_ILLUMINANCE + ": " + photometerValue   + "\n"
-							+ SENSOR_CO2 		 + ": " + co2Value 			+ "\n"
-							+ SENSOR_CO    		 + ": " + coValue    		+ "\n"
+//							+ SENSOR_CO2 		 + ": " + co2Value 			+ "\n"
+//							+ SENSOR_CO    		 + ": " + coValue    		+ "\n"
 							+ SENSOR_FLOOD 		 + ": " + floodValue 		+ "\n";
 				
 			} catch (java.lang.Exception e) {
