@@ -65,6 +65,7 @@ public class Analyzer extends AbstractLogic implements IAnalyzerLogic {
 				time = dateFormatter.format(new Date(Long.parseLong((String) sensor.get("VALUE"))));
 				System.out.println("Time: " + time);
 				analyzerResultJson.addProperty("time", time);
+			
 			// evaluates states for each zone
 			} else if (sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("PresenceSensor")) {
 				System.out.println("Presence Sensor Detected");
@@ -80,6 +81,12 @@ public class Analyzer extends AbstractLogic implements IAnalyzerLogic {
 			} else if (sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("Illuminance")) {
 				value = Integer.parseInt(sensor.get("VALUE"));
 				object.addProperty("illuminanceValue", value);
+			} else if (sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("FloodSensor")) {
+				if(sensor.get("VALUE").equalsIgnoreCase("true")) {
+					object.addProperty("enoughWater", new Boolean(true));
+				} else {
+					object.addProperty("enoughWater", new Boolean(false));
+				} 
 			}
 			
 		}

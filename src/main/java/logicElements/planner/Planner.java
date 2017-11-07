@@ -62,8 +62,8 @@ public class Planner extends AbstractLogic implements IPlannerLogic {
 				JsonObject analyzerResultObject = element.getAsJsonObject();
 				
 				JsonObject plannerResult = new JsonObject();
-				int hourOfTheDay = 0;
-				
+				int hourOfTheDay = Integer.parseInt(analyzerResultObject.get("time").getAsString().substring(0,2));
+
 				
 				// plan for Outside_Area
 				JsonObject outsideArea = new JsonObject();
@@ -74,29 +74,35 @@ public class Planner extends AbstractLogic implements IPlannerLogic {
 					sprinklerValue = new JsonArray();
 					sirenValue = new JsonArray();
 					sprinklerValue.add("OFF");
-					sirenValue.add("ON");
+					if (hourOfTheDay > 17) {
+						sirenValue.add("ON");
+					} else {
+						sirenValue.add("OFF");
+					}
 					
 				} else {
 					sprinklerValue = new JsonArray();
-					sprinklerValue.add("ON");
 					sirenValue = new JsonArray();
 					sirenValue.add("OFF");
-				}
-				
-				// time dependency: Do not water between 15:00 and 17:00.
-				// NOTE: considers the system time and not the time in the simulator
-				hourOfTheDay = Integer.parseInt(analyzerResultObject.get("time").getAsString().substring(0,2));
-				System.out.println("Hour of the day: " + hourOfTheDay);
-				if(hourOfTheDay > 15 && hourOfTheDay < 17) {
-					sprinklerValue = new JsonArray();
-					sprinklerValue.add("OFF");
+					
+					// time dependency: Do only water between 08:00 and 12:00 in the morning.
+					// but only turn on sprinkler if there is not enough water yet
+					// NOTE: considers the system time and not the time in the simulator
+					System.out.println("Hour of the day: " + hourOfTheDay);
+					boolean enoughWater = analyzerResultObject.get("Outside_Area").getAsJsonObject().get("enoughWater").getAsBoolean();
+					if (hourOfTheDay > 8 && hourOfTheDay < 12 && ! enoughWater) {
+						sprinklerValue = new JsonArray();
+						sprinklerValue.add("ON");
+					} else {
+						sprinklerValue.add("OFF");
+					}
+
 				}
 				
 				outsideArea.add("Sprinkler", sprinklerValue);
 				outsideArea.add("Siren", sirenValue);
 				plannerResult.add("Outside_Area", outsideArea);
-				
-				
+						
 				
 				// plan for Play_Area
 				JsonObject playArea = new JsonObject();
@@ -105,12 +111,17 @@ public class Planner extends AbstractLogic implements IPlannerLogic {
 				
 				if(analyzerResultObject.get("Play_Area").getAsJsonObject().get("isPresent").getAsBoolean()) {
 					int thermometerValue = analyzerResultObject.get("Play_Area").getAsJsonObject().get("thermometerValue").getAsInt();
-					if (thermometerValue > 296) {
+					if (thermometerValue > 297) {
 						heaterValue.add(0.0);
 					} else {
 						heaterValue.add(1.0);
 					}
-					lightValue.add(1);
+					int illuminanceValue = analyzerResultObject.get("Play_Area").getAsJsonObject().get("illuminanceValue").getAsInt();
+					if (illuminanceValue > 900) {
+						lightValue.add(0);
+					} else {
+						lightValue.add(1);
+					}
 
 				} else {
 					heaterValue.add(0.0);
@@ -134,8 +145,13 @@ public class Planner extends AbstractLogic implements IPlannerLogic {
 						heaterValue.add(0.0);
 					} else {
 						heaterValue.add(1.0);
+					}					
+					int illuminanceValue = analyzerResultObject.get("Dining_Area").getAsJsonObject().get("illuminanceValue").getAsInt();
+					if (illuminanceValue > 1000) {
+						lightValue.add(0);
+					} else {
+						lightValue.add(1);
 					}
-					lightValue.add(1);
 
 				} else {
 					heaterValue.add(0.0);
@@ -160,7 +176,12 @@ public class Planner extends AbstractLogic implements IPlannerLogic {
 					} else {
 						heaterValue.add(1.0);
 					}					
-					lightValue.add(1);
+					int illuminanceValue = analyzerResultObject.get("Cloakroom").getAsJsonObject().get("illuminanceValue").getAsInt();
+					if (illuminanceValue > 800) {
+						lightValue.add(0);
+					} else {
+						lightValue.add(1);
+					}
 
 				} else {
 					heaterValue.add(0.0);
