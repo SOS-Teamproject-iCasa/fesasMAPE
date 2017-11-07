@@ -49,7 +49,7 @@ public class Analyzer extends AbstractLogic implements IAnalyzerLogic {
 	JsonObject analyzerResultJson = new JsonObject();
 	
 	// evaluate sensors and add to json result 
-	private void evaluateSensors(List<HashMap<String, String>> sensors, String zoneName, String propertyName) {
+	private void evaluateSensors(List<HashMap<String, String>> sensors, String zoneName) {
 		String time = "";
 		int value;
 		
@@ -60,18 +60,20 @@ public class Analyzer extends AbstractLogic implements IAnalyzerLogic {
 			System.out.println(sensor.get("ATTRIBUTE_NAME"));
 			System.out.println(sensor.get("VALUE"));
 			
-			if (sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("PresenceSensor")) {
-				System.out.println("Presence Sensor Detected");
-				if(sensor.get("VALUE").equalsIgnoreCase("true")) {
-					System.out.println("Person in " + zoneName);
-					analyzerResultJson.addProperty(propertyName, new Boolean(true));
-				} else {
-					analyzerResultJson.addProperty(propertyName, new Boolean(false));
-				} 
-			} else if (sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("WorkTime")) {
+			// evaluates system time
+			if (sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("WorkTime")) {
 				time = dateFormatter.format(new Date(Long.parseLong((String) sensor.get("VALUE"))));
 				System.out.println("Time: " + time);
 				analyzerResultJson.addProperty("time", time);
+			// evaluates states for each zone
+			} else if (sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("PresenceSensor")) {
+				System.out.println("Presence Sensor Detected");
+				if(sensor.get("VALUE").equalsIgnoreCase("true")) {
+					System.out.println("Person in " + zoneName);
+					object.addProperty("isPresent", new Boolean(true));
+				} else {
+					object.addProperty("isPresent", new Boolean(false));
+				} 
 			} else if (sensor.get("ATTRIBUTE_NAME").equalsIgnoreCase("Thermometer")) {
 				value = Integer.parseInt(sensor.get("VALUE"));
 				object.addProperty("thermometerValue", value);
@@ -111,21 +113,21 @@ public class Analyzer extends AbstractLogic implements IAnalyzerLogic {
 				
 				// evaluate sensors for Play_Area
 				List<HashMap<String, String>> playAreaSensors = zoneMap.get("Play_Area");
-				evaluateSensors(playAreaSensors, "Play_Area", "personInPlayArea");
+				evaluateSensors(playAreaSensors, "Play_Area");
 				
 				// evaluate sensors for Outside Area
 				List<HashMap<String, String>> outsideAreaSensors = zoneMap.get("Outside_Area");
-				evaluateSensors(outsideAreaSensors, "Outside_Area", "personInOutsideArea");
+				evaluateSensors(outsideAreaSensors, "Outside_Area");
 
 				
 				// evaluate sensors for Dining Area
 				List<HashMap<String, String>> diningAreaSensors = zoneMap.get("Dining_Area");
-				evaluateSensors(diningAreaSensors, "Dining_Area", "personInDiningArea");
+				evaluateSensors(diningAreaSensors, "Dining_Area");
 				
 				
 				// evaluate sensors for Dining Area
 				List<HashMap<String, String>> cloakroomSensors = zoneMap.get("Cloakroom");
-				evaluateSensors(cloakroomSensors, "Cloakroom", "personInCloakroom");
+				evaluateSensors(cloakroomSensors, "Cloakroom");
 
 				// forward data to planer
 				this.sendData(analyzerResultJson.toString());
